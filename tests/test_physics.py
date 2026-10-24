@@ -9,16 +9,16 @@ G = 9.81
 def test_range_matches_formula():
     # range L = v0² · sin(2α) / g, given h0 = 0
     v0, alpha = 50.0, 45.0
-    x, y, T = trajectory(v0, alpha)
+    x, y, flight_time = trajectory(v0, alpha)
     expected = v0**2 * np.sin(np.radians(2 * alpha)) / G
     assert x[-1] == pytest.approx(expected, rel=1e-3)
 
 
 def test_flight_time_matches_formula():
-    # T = 2 · v0 · sin(α) / g, given h0 = 0
+    # flight_time = 2 · v0 · sin(α) / g, given h0 = 0
     v0, alpha = 50.0, 30.0
-    _, _, T = trajectory(v0, alpha)
-    assert T == pytest.approx(2 * v0 * np.sin(np.radians(alpha)) / G, rel=1e-6)
+    _, _, flight_time = trajectory(v0, alpha)
+    assert flight_time == pytest.approx(2 * v0 * np.sin(np.radians(alpha)) / G, rel=1e-6)
 
 
 def test_max_height_matches_formula():
@@ -44,10 +44,10 @@ def test_complementary_angles_give_same_range():
 
 def test_launch_from_height_flies_further_and_lands_at_zero():
     v0, alpha, h0 = 30.0, 30.0, 20.0
-    x, y, T = trajectory(v0, alpha, h0=h0)
+    x, y, flight_time = trajectory(v0, alpha, h0=h0)
     vy = v0 * np.sin(np.radians(alpha))
-    expected_T = (vy + np.sqrt(vy**2 + 2 * G * h0)) / G
-    assert T == pytest.approx(expected_T, rel=1e-6)
+    expected_flight_time = (vy + np.sqrt(vy ** 2 + 2 * G * h0)) / G
+    assert flight_time == pytest.approx(expected_flight_time, rel=1e-6)
     assert y[0] == pytest.approx(h0)
     assert y[-1] == pytest.approx(0.0, abs=1e-6)
 
