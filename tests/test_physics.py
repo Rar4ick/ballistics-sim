@@ -55,3 +55,8 @@ def test_launch_from_height_flies_further_and_lands_at_zero():
 def test_returns_requested_number_of_points():
     x, y, _ = trajectory(30.0, 45.0, n=50)
     assert len(x) == len(y) == 50
+
+
+def test_zero_gravity_raises_error():
+    with pytest.raises(ValueError):
+        trajectory(v0=20, alpha_deg=45, g=0)

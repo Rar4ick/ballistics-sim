@@ -9,13 +9,14 @@ import numpy as np
 
 
 def trajectory(v0, alpha_deg, h0=0.0, g=9.81, n=200):
+    if g <= 0:
+        raise ValueError("g must be positive")
+
     alpha_rad = np.radians(alpha_deg)  # NumPy trig functions expect radians
 
     vx, vy = v0 * np.cos(alpha_rad), v0 * np.sin(alpha_rad)
 
-    a, b, c = g, -2 * vy, -2 * h0
-    roots = np.roots([a, b, c])
-    flight_time = roots.max()
+    flight_time = (vy + np.sqrt(vy**2 + 2 * g * h0)) / g
     times_array = np.linspace(0, flight_time, n)
 
     x = vx * times_array
