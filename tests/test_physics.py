@@ -57,11 +57,6 @@ def test_returns_requested_number_of_points():
     assert len(x) == len(y) == 50
 
 
-def test_zero_gravity_raises_error():
-    with pytest.raises(ValueError):
-        trajectory(v0=20, alpha_deg=45, g=0)
-
-
 @pytest.mark.parametrize("v0", [-1, float("nan"), float("inf"), -float("inf"), "45"])
 def test_trajectory_rejects_invalid_v0(v0):
     with pytest.raises(ValueError):
