@@ -60,3 +60,9 @@ def test_returns_requested_number_of_points():
 def test_zero_gravity_raises_error():
     with pytest.raises(ValueError):
         trajectory(v0=20, alpha_deg=45, g=0)
+
+
+@pytest.mark.parametrize("n", [1, 0, -5, 2.5, "10", True])
+def test_rejects_invalid_number_of_points(n):
+    with pytest.raises((ValueError, TypeError)):
+        trajectory(v0=20, alpha_deg=45, n=n)
