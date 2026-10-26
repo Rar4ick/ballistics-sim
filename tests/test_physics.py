@@ -69,13 +69,13 @@ def test_trajectory_rejects_invalid_v0(v0):
 
 
 @pytest.mark.parametrize("alpha_deg", [float("nan"), float("inf"), -float("inf"), "45"])
-def test_trajectory_rejects_invalid_alpha_deg(alpha_deg):
+def test_trajectory_rejects_nonfinite_or_non_numeric_alpha(alpha_deg):
     with pytest.raises(ValueError):
         trajectory(v0=50, alpha_deg=alpha_deg)
 
 
 @pytest.mark.parametrize("alpha_deg", [-10, 100])
-def test_trajectory_rejects_invalid_alpha_deg(alpha_deg):
+def test_trajectory_rejects_out_of_range_alpha(alpha_deg):
     with pytest.raises(ValueError):
         trajectory(v0=50, alpha_deg=alpha_deg)
 
