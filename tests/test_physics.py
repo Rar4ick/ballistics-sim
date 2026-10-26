@@ -62,7 +62,60 @@ def test_zero_gravity_raises_error():
         trajectory(v0=20, alpha_deg=45, g=0)
 
 
+@pytest.mark.parametrize("v0", [-1, float("nan"), float("inf"), -float("inf"), "45"])
+def test_trajectory_rejects_invalid_v0(v0):
+    with pytest.raises(ValueError):
+        trajectory(v0=v0, alpha_deg=45)
+
+
+@pytest.mark.parametrize("alpha_deg", [float("nan"), float("inf"), -float("inf"), "45"])
+def test_trajectory_rejects_invalid_alpha_deg(alpha_deg):
+    with pytest.raises(ValueError):
+        trajectory(v0=50, alpha_deg=alpha_deg)
+
+
+@pytest.mark.parametrize("alpha_deg", [-10, 100])
+def test_trajectory_rejects_invalid_alpha_deg(alpha_deg):
+    with pytest.raises(ValueError):
+        trajectory(v0=50, alpha_deg=alpha_deg)
+
+
+@pytest.mark.parametrize("alpha_deg", [0, 90])
+def test_trajectory_accepts_boundary_angles(alpha_deg):
+    trajectory(v0=50, alpha_deg=alpha_deg)
+
+
+@pytest.mark.parametrize("h0", [-1, float("nan"), float("inf"), -float("inf"), "45"])
+def test_trajectory_rejects_invalid_h0(h0):
+    with pytest.raises(ValueError):
+        trajectory(v0=50, alpha_deg=45, h0=h0)
+
+
+@pytest.mark.parametrize("g", [-1, 0, float("nan"), float("inf"), -float("inf"), "9.81"])
+def test_trajectory_rejects_invalid_g(g):
+    with pytest.raises(ValueError):
+        trajectory(v0=50, alpha_deg=45, g=g)
+
+
 @pytest.mark.parametrize("n", [1, 0, -5, 2.5, "10", True])
 def test_rejects_invalid_number_of_points(n):
     with pytest.raises((ValueError, TypeError)):
         trajectory(v0=20, alpha_deg=45, n=n)
+
+
+def test_zero_velocity_at_ground():
+    x, y, flight_time = trajectory(v0=0, alpha_deg=45, h0=0)
+
+    assert flight_time == pytest.approx(0.0)
+    assert x[-1] == pytest.approx(0.0)
+    assert y[-1] == pytest.approx(0.0)
+
+
+def test_zero_velocity_from_height():
+    h0 = 20.0
+    x, y, flight_time = trajectory(v0=0, alpha_deg=45, h0=h0)
+
+    assert flight_time == pytest.approx((2 * h0 / G) ** 0.5)
+    assert x[-1] == pytest.approx(0.0)
+    assert y[0] == pytest.approx(h0)
+    assert y[-1] == pytest.approx(0.0, abs=1e-6)

@@ -6,7 +6,8 @@ n: number of trajectory points.
 Returns x, y (arrays, m) and flight time (s).
 """
 import numpy as np
-
+import math
+from numbers import Real
 
 def trajectory(
     v0: float,
@@ -15,12 +16,28 @@ def trajectory(
     g: float = 9.81,
     n: int = 200,
 ) -> tuple[np.ndarray, np.ndarray, float]:
+    if isinstance(v0, bool) or not isinstance(v0, Real) or not math.isfinite(v0):
+        raise ValueError("v0 must be a finite number")
+    if v0 < 0:
+        raise ValueError("v0 must be non-negative")
+
+    if isinstance(alpha_deg, bool) or not isinstance(alpha_deg, Real) or not math.isfinite(alpha_deg):
+        raise ValueError("alpha_deg must be a finite number")
+    if not 0 <= alpha_deg <= 90:
+        raise ValueError("alpha_deg must be between 0 and 90 degrees")
+
+    if isinstance(h0, bool) or not isinstance(h0, Real) or not math.isfinite(h0):
+        raise ValueError("h0 must be a finite number")
+    if h0 < 0:
+        raise ValueError("h0 must be non-negative")
+
+    if isinstance(g, bool) or not isinstance(g, Real) or not math.isfinite(g):
+        raise ValueError("g must be a finite number")
     if g <= 0:
         raise ValueError("g must be positive")
 
     if isinstance(n, bool) or not isinstance(n, int):
         raise TypeError("n must be an integer")
-
     if n < 2:
         raise ValueError("n must be at least 2")
 
@@ -33,4 +50,5 @@ def trajectory(
 
     x = vx * times_array
     y = h0 + vy * times_array - g * times_array ** 2 / 2
+
     return x, y, flight_time
