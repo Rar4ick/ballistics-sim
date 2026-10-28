@@ -8,24 +8,24 @@ G = 9.81
 
 def test_range_matches_formula():
     # range L = v0² · sin(2α) / g, given h0 = 0
-    v0, alpha = 50.0, 45.0
-    x, y, flight_time = trajectory(v0, alpha)
-    expected = v0**2 * np.sin(np.radians(2 * alpha)) / G
+    v0, alpha_deg = 50.0, 45.0
+    x, y, flight_time = trajectory(v0=v0, alpha_deg=alpha_deg)
+    expected = v0 ** 2 * np.sin(np.radians(2 * alpha_deg)) / G
     assert x[-1] == pytest.approx(expected, rel=1e-3)
 
 
 def test_flight_time_matches_formula():
     # flight_time = 2 · v0 · sin(α) / g, given h0 = 0
-    v0, alpha = 50.0, 30.0
-    _, _, flight_time = trajectory(v0, alpha)
-    assert flight_time == pytest.approx(2 * v0 * np.sin(np.radians(alpha)) / G, rel=1e-6)
+    v0, alpha_deg = 50.0, 30.0
+    _, _, flight_time = trajectory(v0, alpha_deg)
+    assert flight_time == pytest.approx(2 * v0 * np.sin(np.radians(alpha_deg)) / G, rel=1e-6)
 
 
 def test_max_height_matches_formula():
     # H = v0² · sin²(α) / (2g)
-    v0, alpha = 50.0, 60.0
-    _, y, _ = trajectory(v0, alpha)
-    expected = v0**2 * np.sin(np.radians(alpha)) ** 2 / (2 * G)
+    v0, alpha_deg = 50.0, 60.0
+    _, y, _ = trajectory(v0, alpha_deg)
+    expected = v0 ** 2 * np.sin(np.radians(alpha_deg)) ** 2 / (2 * G)
     assert y.max() == pytest.approx(expected, rel=1e-3)
 
 
@@ -114,3 +114,11 @@ def test_zero_velocity_from_height():
     assert x[-1] == pytest.approx(0.0)
     assert y[0] == pytest.approx(h0)
     assert y[-1] == pytest.approx(0.0, abs=1e-6)
+
+
+def test_vertical_launch_has_no_horizontal_motion():
+    x, y, _ = trajectory(v0=20, alpha_deg=90)
+
+    np.testing.assert_allclose(x, 0.0, atol=1e-7, rtol=0)
+    assert y[0] == 0
+    assert np.max(y) > 0

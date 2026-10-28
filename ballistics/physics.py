@@ -5,9 +5,11 @@ h0: initial height, m; g: gravitational acceleration, m/s²;
 n: number of trajectory points.
 Returns x, y (arrays, m) and flight time (s).
 """
-import numpy as np
+
 import math
 from numbers import Real
+import numpy as np
+
 
 def trajectory(
     v0: float,
@@ -16,6 +18,7 @@ def trajectory(
     g: float = 9.81,
     n: int = 200,
 ) -> tuple[np.ndarray, np.ndarray, float]:
+
     if isinstance(v0, bool) or not isinstance(v0, Real) or not math.isfinite(v0):
         raise ValueError("v0 must be a finite number")
     if v0 < 0:
